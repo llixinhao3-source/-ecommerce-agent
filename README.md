@@ -101,11 +101,16 @@ npm run dev
 
 ## 使用示例
 
-### 界面操作
-1. 打开 `http://localhost:8080/#/ecommerce`
-2. 选择功能模块
-3. 填写参数并点击执行
-4. 查看执行日志
+### 前端部署
+```bash
+cd frontend
+npm install
+npm run build
+# 部署到 GitHub Pages / Vercel / Netlify
+```
+
+### 界面预览
+前端代码位于 `frontend/` 目录，部署后访问 `/#/ecommerce` 即可使用电商运营控制台。
 
 ### Python技能调用
 ```bash
