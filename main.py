@@ -4,18 +4,19 @@
 Ecommerce Full-Chain Operation Agent
 
 支持功能：
-- 低粉爆品挖掘
-- 高粉爆品追踪
+- 选品挖掘：低粉爆品/高粉爆品
+- 内容创作：标题去AI化
+- 图片处理：白底图生成
+- 数据分析：ROI分析/竞品监控
+- 亚马逊：选品/上架
 - 违禁词检测
-- ROI分析
-- 定时任务调度
-- 记忆系统
 """
 
 import argparse
 import sys
 import json
 from datetime import datetime
+
 
 class EcommerceAgent:
     """电商全链路运营Agent"""
@@ -39,17 +40,9 @@ class EcommerceAgent:
     def default_config(self) -> dict:
         """默认配置"""
         return {
-            "dingtalk": {
-                "webhook": "",
-                "at_mobiles": []
-            },
-            "browser": {
-                "cdp_url": "http://127.0.0.1:9222"
-            },
-            "paths": {
-                "output": "./output",
-                "memory": "./memory"
-            }
+            "dingtalk": {"webhook": "", "at_mobiles": []},
+            "browser": {"cdp_url": "http://127.0.0.1:9222"},
+            "paths": {"output": "./output", "memory": "./memory"}
         }
     
     def init_memory(self):
@@ -81,7 +74,6 @@ class EcommerceAgent:
         try:
             result = skill.execute(**kwargs)
             
-            # 记录到记忆
             if self.memory:
                 self.memory.add_task_record(name, result)
             
@@ -122,7 +114,6 @@ class EcommerceAgent:
         """运行主逻辑"""
         result = self.run_skill(skill_name, **kwargs)
         
-        # 自动发送钉钉通知
         if result and result.get("notify"):
             message = result.get("message", "") + "\n\n" + json.dumps(result.get("data", {}), ensure_ascii=False, indent=2)
             self.send_dingtalk(message)
@@ -150,6 +141,10 @@ class EcommerceAgent:
         """停止调度器"""
         if self.scheduler:
             self.scheduler.stop()
+    
+    def list_skills(self) -> list:
+        """列出所有技能"""
+        return list(self.skills.keys())
 
 
 def main():
@@ -157,30 +152,37 @@ def main():
     parser.add_argument("--skill", "-s", required=True, help="技能名称")
     parser.add_argument("--params", "-p", default="{}", help="技能参数(JSON格式)")
     parser.add_argument("--config", "-c", default="config/settings.json", help="配置文件")
-    parser.add_argument("--notify", "-n", action="store_true", help="完成后发送钉钉通知")
     
     args = parser.parse_args()
     
-    # 解析参数
     try:
         params = json.loads(args.params)
     except json.JSONDecodeError:
         print("❌ 参数格式错误，请使用JSON格式")
         sys.exit(1)
     
-    # 初始化Agent
     agent = EcommerceAgent(args.config)
     
-    # 注册技能
+    # 注册所有技能
     from skills.low_fans_hunter import LowFansHunter
     from skills.high_fans_tracker import HighFansTracker
     from skills.prohibited_word_checker import ProhibitedWordChecker
     from skills.roi_analyzer import ROIAnalyzer
+    from skills.white_background_generator import WhiteBackgroundGenerator
+    from skills.ai_title_dehumanizer import AITitleDehumanizer
+    from skills.competitor_monitor import CompetitorMonitor
+    from skills.amazon_product_selector import AmazonProductSelector
+    from skills.amazon_listing_publisher import AmazonListingPublisher
     
     agent.register_skill("low_fans_hunter", LowFansHunter(agent))
     agent.register_skill("high_fans_tracker", HighFansTracker(agent))
     agent.register_skill("prohibited_word_checker", ProhibitedWordChecker(agent))
     agent.register_skill("roi_analyzer", ROIAnalyzer(agent))
+    agent.register_skill("white_background_generator", WhiteBackgroundGenerator(agent))
+    agent.register_skill("ai_title_dehumanizer", AITitleDehumanizer(agent))
+    agent.register_skill("competitor_monitor", CompetitorMonitor(agent))
+    agent.register_skill("amazon_product_selector", AmazonProductSelector(agent))
+    agent.register_skill("amazon_listing_publisher", AmazonListingPublisher(agent))
     
     # 运行技能
     result = agent.run(args.skill, **params)
@@ -190,7 +192,8 @@ def main():
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
         print(f"❌ 技能执行失败: {args.skill}")
-        print(json.dumps(result, ensure_ascii=False, indent=2) if result else "")
+        if result:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
         sys.exit(1)
 
 

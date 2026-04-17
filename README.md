@@ -1,44 +1,32 @@
 # Ecommerce Agent - 电商全链路运营Agent
 
-> 基于大模型的电商运营自动化工具，支持选品挖掘、违禁词检测、ROI分析、定时任务等功能
+> 基于大模型的电商运营自动化工具，支持选品挖掘、内容创作、数据分析、平台上架等完整链路
 
 ## 功能特性
 
-### 已实现的功能
+### 已实现的技能 (9个)
 
-| 技能 | 说明 | 状态 |
-|------|------|------|
-| 低粉爆品挖掘 | 从小红书/抖音挖掘粉丝少但销量高的潜力爆品 | ✅ |
-| 高粉爆品追踪 | 追踪已验证的爆品模式，按类目轮换 | ✅ |
-| 违禁词检测 | 检测客服聊天中的违禁词 | ✅ |
-| ROI分析 | 计算广告投放回报，指导投流决策 | ✅ |
-
-### 工具集
-
-| 工具 | 说明 | 状态 |
-|------|------|------|
-| 钉钉推送 | 支持文本/Markdown/链接消息 | ✅ |
-| 浏览器自动化 | Playwright封装，支持截图/点击/填表 | ✅ |
-| Excel处理 | Pandas封装，支持读写/追加/多表 | ✅ |
-| 图片处理 | 缩放/水印/缩略图 | ✅ |
+| 分类 | 技能 | 说明 | 状态 |
+|------|------|------|------|
+| **选品挖掘** | LowFansHunter | 低粉爆品挖掘（四维验证） | ✅ |
+| | HighFansTracker | 高粉爆品追踪（类目轮换） | ✅ |
+| **内容创作** | AITitleDehumanizer | 标题去AI化 | ✅ |
+| **图片处理** | WhiteBackgroundGenerator | 白底图生成 | ✅ |
+| **数据分析** | ROIAnalyzer | 广告ROI分析 | ✅ |
+| | CompetitorMonitor | 竞品监控 | ✅ |
+| **违规检测** | ProhibitedWordChecker | 客服违禁词检测 | ✅ |
+| **亚马逊** | AmazonProductSelector | 亚马逊选品 | ✅ |
+| | AmazonListingPublisher | 亚马逊自动上架 | ✅ |
 
 ### 系统特性
 
 | 特性 | 说明 | 状态 |
 |------|------|------|
-| 记忆系统 | 核心记忆+日级记忆+关键词搜索 | ✅ |
+| 记忆系统 | 核心记忆+日级记忆+搜索 | ✅ |
 | 定时调度 | Cron表达式+间隔任务 | ✅ |
 | 钉钉通知 | 自动推送执行结果 | ✅ |
-
-### 计划开发
-
-| 技能 | 说明 | 状态 |
-|------|------|------|
-| 竞品监控 | 实时监控竞品价格、库存变动 | 🔜 |
-| 白底图生成 | AI生成白底图 | 🔜 |
-| 场景图制作 | 影视化场景图生成 | 🔜 |
-| 标题去AI化 | 将AI生成的标题转成native表达 | 🔜 |
-| 亚马逊选品 | BSR分析+利润计算 | 🔜 |
+| 浏览器自动化 | Playwright封装 | ✅ |
+| Excel处理 | Pandas封装 | ✅ |
 
 ## 安装
 
@@ -67,10 +55,6 @@ playwright install chromium
   },
   "browser": {
     "cdp_url": "http://127.0.0.1:9222"
-  },
-  "paths": {
-    "output": "./output",
-    "memory": "./memory"
   }
 }
 ```
@@ -79,16 +63,31 @@ playwright install chromium
 
 ```bash
 # 违禁词检测
-python main.py -s prohibited_word_checker -p '{"file_path": "data/chat.xlsx", "output": "output/report.xlsx"}'
+python main.py -s prohibited_word_checker -p '{"file_path": "data/chat.xlsx"}'
 
 # ROI分析
-python main.py -s roi_analyzer -p '{"file_path": "data/ads.xlsx", "output": "output/roi.xlsx"}'
+python main.py -s roi_analyzer -p '{"file_path": "data/ads.xlsx"}'
 
 # 低粉爆品挖掘
-python main.py -s low_fans_hunter -p '{"platform": "xiaohongshu", "keyword": "收纳", "output": "output/hot.xlsx"}'
+python main.py -s low_fans_hunter -p '{"platform": "xiaohongshu", "keyword": "收纳"}'
 
-# 高粉爆品追踪（自动使用今日类目）
-python main.py -s high_fans_tracker -p '{"platform": "xiaohongshu", "output": "output/trend.xlsx"}'
+# 高粉爆品追踪
+python main.py -s high_fans_tracker -p '{"platform": "xiaohongshu"}'
+
+# 标题去AI化
+python main.py -s ai_title_dehumanizer -p '{"product": "咖啡杯"}'
+
+# 白底图生成
+python main.py -s white_background_generator -p '{"input_path": "images/", "batch": true}'
+
+# 竞品监控
+python main.py -s competitor_monitor -p '{"urls": ["url1", "url2"]}'
+
+# 亚马逊选品
+python main.py -s amazon_product_selector -p '{"file_path": "data/amazon.xlsx"}'
+
+# 亚马逊上架
+python main.py -s amazon_listing_publisher -p '{"file_path": "data/products.xlsx"}'
 ```
 
 ## 项目结构
@@ -98,152 +97,111 @@ ecommerce-agent/
 ├── main.py                 # 主入口
 ├── memory.py               # 记忆系统
 ├── scheduler.py            # 定时调度器
-├── requirements.txt        # 依赖
-├── README.md               # 文档
+├── requirements.txt       # 依赖
+├── README.md              # 文档
 ├── config/
-│   └── settings.json       # 配置文件
-├── skills/
-│   ├── __init__.py         # Skill基类
-│   ├── low_fans_hunter.py # 低粉爆品挖掘
-│   ├── high_fans_tracker.py # 高粉爆品追踪
-│   ├── prohibited_word_checker.py  # 违禁词检测
-│   └── roi_analyzer.py     # ROI分析
-├── tools/
+│   └── settings.json      # 配置文件
+├── skills/                # 技能模块
 │   ├── __init__.py
-│   ├── dingtalk.py        # 钉钉推送
+│   ├── low_fans_hunter.py        # 低粉爆品挖掘
+│   ├── high_fans_tracker.py       # 高粉爆品追踪
+│   ├── prohibited_word_checker.py # 违禁词检测
+│   ├── roi_analyzer.py            # ROI分析
+│   ├── white_background_generator.py # 白底图生成
+│   ├── ai_title_dehumanizer.py   # 标题去AI化
+│   ├── competitor_monitor.py     # 竞品监控
+│   ├── amazon_product_selector.py  # 亚马逊选品
+│   └── amazon_listing_publisher.py # 亚马逊上架
+├── tools/                  # 工具集
+│   ├── dingtalk.py         # 钉钉推送
 │   ├── browser.py          # 浏览器操作
-│   ├── excel.py           # Excel处理
-│   └── image.py           # 图片处理
+│   ├── excel.py            # Excel处理
+│   └── image.py            # 图片处理
 ├── memory/                  # 记忆存储
-│   ├── core.json          # 核心记忆
-│   └── daily_*.json      # 日级记忆
 └── output/                 # 输出目录
 ```
 
-## 使用示例
+## 技能详解
 
-### Python调用
+### 1. 低粉爆品挖掘 (LowFansHunter)
+
+**四维验证模型**：
+- 粉丝<1000
+- 点赞>10
+- 评论<50
+- 1-2个月内
 
 ```python
-from main import EcommerceAgent
-
-# 初始化
-agent = EcommerceAgent()
-
-# 注册技能（自动注册）
-# agent.register_skill("low_fans_hunter", LowFansHunter(agent))
-
-# 运行违禁词检测
-result = agent.run("prohibited_word_checker", 
-    file_path="data/chat.xlsx",
-    output="output/report.xlsx"
+result = agent.run("low_fans_hunter", 
+    platform="xiaohongshu",
+    keyword="收纳",
+    output="./output/hot.xlsx"
 )
-print(result)
-
-# 搜索记忆
-results = agent.search_memory("低粉爆品")
-print(results)
 ```
 
-### 定时任务
+### 2. 高粉爆品追踪 (HighFansTracker)
 
-```python
-from main import EcommerceAgent
+**类目轮换表**：
+| 周几 | 大类目 | 小类目 |
+|------|--------|--------|
+| 周一 | 家居日用 | 收纳整理 |
+| 周二 | 厨房用品 | 烹饪工具 |
+| 周三 | 数码配件 | 充电设备 |
+| 周四 | 美妆护肤 | 护肤工具 |
+| 周五 | 母婴用品 | 喂养用品 |
+| 周六 | 运动户外 | 健身装备 |
+| 周日 | 家纺布艺 | 床上用品 |
 
-agent = EcommerceAgent()
+### 3. 违禁词检测 (ProhibitedWordChecker)
 
-# 添加每日9点执行的违禁词检测任务
-agent.add_schedule_task(
-    task_id="daily_check",
-    name="每日违禁词检测",
-    schedule="0 9 * * *",  # 每天9点
-    skill_name="prohibited_word_checker",
-    file_path="data/chat.xlsx",
-    output="output/report.xlsx"
-)
+**违禁词分类**：
+- 🔴 严重违规：辱骂、攻击、敏感词
+- ⚠️ 一般违规：不耐烦、催促、消极
 
-# 启动调度器
-agent.start_scheduler()
+### 4. ROI分析 (ROIAnalyzer)
 
-# 运行一段时间后停止
-import time
-time.sleep(3600)  # 运行1小时
-agent.stop_scheduler()
+**评分公式**：
+```
+总分 = 销量分×0.3 + 利润分×0.25 + 竞争度×0.25 + 评分分×0.2
 ```
 
-### 违禁词检测
+### 5. 标题去AI化 (AITitleDehumanizer)
 
-```python
-from skills.prohibited_word_checker import ProhibitedWordChecker
+**去AI化技巧**：
+- 避免：Best/Top/Premium
+- 加入：actually/for real/no cap
+- 口语化：I'm obsessed with...
 
-checker = ProhibitedWordChecker(agent)
-violations = checker.check_excel("data/chat.xlsx", "聊天内容")
+### 6. 白底图生成 (WhiteBackgroundGenerator)
 
-# 生成报告
-report = checker.generate_report()
-print(report)
-```
+**标准**：
+- 纯白背景 (RGB: 255,255,255)
+- 产品占比60-70%
+- 分辨率：1024×1024
 
-### ROI分析
+### 7. 竞品监控 (CompetitorMonitor)
 
-```python
-from skills.roi_analyzer import ROIAnalyzer
+**告警规则**：
+- 价格变动>5%
+- 库存<20
+- 评分下降>0.2
+- BSR排名变动>50
 
-analyzer = ROIAnalyzer(agent)
-analyzer.load_data("data/ads.xlsx")
-results = analyzer.analyze()
+### 8. 亚马逊选品 (AmazonProductSelector)
 
-# 生成报告
-report = analyzer.generate_report()
-print(report)
-```
+**选品标准**：
+- 月销>300单
+- 评论<100条
+- 利润>30%
+- 评分<4.3
 
-## 配置说明
+### 9. 亚马逊上架 (AmazonListingPublisher)
 
-### 钉钉配置
-
-```json
-{
-  "dingtalk": {
-    "webhook": "https://oapi.dingtalk.com/robot/send?access_token=xxx",
-    "at_mobiles": ["138xxxx"]
-  }
-}
-```
-
-### 浏览器配置
-
-```json
-{
-  "browser": {
-    "cdp_url": "http://127.0.0.1:9222",
-    "headless": false
-  }
-}
-```
-
-### 技能配置
-
-```json
-{
-  "skills": {
-    "low_fans_hunter": {
-      "max_fans": 1000,
-      "min_likes": 10,
-      "max_days": 60
-    }
-  }
-}
-```
-
-## 定时任务Cron表达式
-
-| 表达式 | 说明 |
-|--------|------|
-| `0 9 * * *` | 每天9点 |
-| `0 */2 * * *` | 每2小时 |
-| `0 9,18 * * *` | 每天9点和18点 |
-| `0 9 * * 1-5` | 工作日9点 |
+**上架流程**：
+1. 生成标题（去AI化）
+2. 生成五点描述
+3. 生成搜索关键词
+4. 导出Excel上传
 
 ## 开发指南
 
@@ -257,7 +215,6 @@ class MySkill(BaseSkill):
         super().__init__(agent)
     
     def execute(self, **kwargs):
-        # 你的逻辑
         return {
             "success": True,
             "data": {},
@@ -266,24 +223,27 @@ class MySkill(BaseSkill):
         }
 ```
 
-### 添加新工具
-
-在 `tools/` 目录下创建新工具文件：
+### 添加定时任务
 
 ```python
-# tools/my_tool.py
-class MyTool:
-    def __init__(self):
-        pass
-    
-    def do_something(self):
-        pass
+agent.add_schedule_task(
+    task_id="daily_check",
+    name="每日违禁词检测",
+    schedule="0 9 * * *",
+    skill_name="prohibited_word_checker",
+    file_path="data/chat.xlsx"
+)
+agent.start_scheduler()
 ```
+
+## 定时任务Cron表达式
+
+| 表达式 | 说明 |
+|--------|------|
+| `0 9 * * *` | 每天9点 |
+| `0 */2 * * *` | 每2小时 |
+| `0 9,18 * * *` | 每天9点和18点 |
 
 ## License
 
 MIT License
-
-## 贡献
-
-欢迎提交Issue和PR！
