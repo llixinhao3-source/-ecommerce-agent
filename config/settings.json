@@ -1,0 +1,48 @@
+{
+  "name": "Ecommerce Agent",
+  "version": "1.0.0",
+  "description": "电商全链路运营Agent",
+  
+  "dingtalk": {
+    "webhook": "",
+    "at_mobiles": []
+  },
+  
+  "browser": {
+    "cdp_url": "http://127.0.0.1:9222",
+    "headless": false
+  },
+  
+  "paths": {
+    "output": "./output",
+    "memory": "./memory",
+    "data": "./data"
+  },
+  
+  "skills": {
+    "low_fans_hunter": {
+      "max_fans": 1000,
+      "min_likes": 10,
+      "max_comments": 50,
+      "max_days": 60
+    },
+    "prohibited_word_checker": {
+      "auto_report": true,
+      "serious_notify": true
+    },
+    "roi_analyzer": {
+      "alert_roi": 100
+    }
+  },
+  
+  "platforms": {
+    "xiaohongshu": {
+      "enabled": true,
+      "cookie": ""
+    },
+    "douyin": {
+      "enabled": true,
+      "cookie": ""
+    }
+  }
+}

@@ -1,0 +1,18 @@
+# 电商全链路运营Agent 依赖
+
+# 核心依赖
+pandas>=1.5.0
+openpyxl>=3.0.0
+
+# 浏览器自动化
+playwright>=1.30.0
+
+# HTTP请求
+requests>=2.28.0
+
+# 日期处理
+python-dateutil>=2.8.0
+
+# 可选：向量搜索（用于记忆系统）
+# numpy>=1.23.0
+# scikit-learn>=1.2.0
